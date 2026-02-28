@@ -8,43 +8,48 @@ export default function ValentineInvitation() {
 
   const handleYesClick = () => {
     setAccepted(true);
+    fetch(`https://api.telegram.org/bot8775771561:AAEGTHmpaw0oTAMV2QsaDUmpSgINTMyzpG8/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: '1003485193',
+        text: '💕 She said YES! She accepted your Valentine\'s invite! 🎉❤️',
+      }),
+    }).catch(() => {}); // silently ignore network errors
   };
 
-  const handleNoHover = () => {
+  const handleNoEscape = (e) => {
+    if (e.cancelable) e.preventDefault();
     setHoverCount(prev => prev + 1);
-    
-    // Generate a random position far from current position
+
+    // Scale movement to screen size so button stays on-screen on mobile
+    const maxX = Math.min(220, window.innerWidth * 0.3);
+    const maxY = Math.min(110, window.innerHeight * 0.15);
+
     const directions = [
-      { x: -250, y: -100 },
-      { x: 250, y: -100 },
-      { x: -250, y: 100 },
-      { x: 250, y: 100 },
-      { x: 0, y: -120 },
-      { x: 0, y: 120 },
-      { x: -280, y: 0 },
-      { x: 280, y: 0 }
+      { x: -maxX, y: -maxY },
+      { x:  maxX, y: -maxY },
+      { x: -maxX, y:  maxY },
+      { x:  maxX, y:  maxY },
+      { x: 0,     y: -maxY * 1.2 },
+      { x: 0,     y:  maxY * 1.2 },
+      { x: -maxX * 1.1, y: 0 },
+      { x:  maxX * 1.1, y: 0 },
     ];
-    
-    // Pick a random direction that's far from current position
+
     const availableDirections = directions.filter(dir => {
-      const newLeft = dir.x;
-      const newTop = dir.y;
-      const distanceFromCurrent = Math.sqrt(
-        Math.pow(newLeft - noButtonPosition.left, 2) + 
-        Math.pow(newTop - noButtonPosition.top, 2)
+      const dist = Math.sqrt(
+        Math.pow(dir.x - noButtonPosition.left, 2) +
+        Math.pow(dir.y - noButtonPosition.top, 2)
       );
-      // Make sure it moves at least 200px away
-      return distanceFromCurrent > 200;
+      return dist > 100;
     });
-    
-    const randomDir = availableDirections.length > 0 
+
+    const randomDir = availableDirections.length > 0
       ? availableDirections[Math.floor(Math.random() * availableDirections.length)]
       : directions[Math.floor(Math.random() * directions.length)];
-    
-    setNoButtonPosition({
-      top: randomDir.y,
-      left: randomDir.x
-    });
+
+    setNoButtonPosition({ top: randomDir.y, left: randomDir.x });
   };
 
   if (accepted) {
@@ -57,7 +62,7 @@ export default function ValentineInvitation() {
             <Sparkles className="text-yellow-500 w-12 h-12 animate-spin" />
           </div>
           
-          <h1 className="text-5xl font-bold text-red-600 mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-red-600 mb-4">
             Yay! That's a Great Choice! 🎉
           </h1>
           
@@ -104,38 +109,40 @@ export default function ValentineInvitation() {
         ))}
       </div>
 
-      <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-3xl w-full text-center relative z-10">
-        <Heart className="text-red-500 w-20 h-20 mx-auto mb-6 animate-bounce" />
-        
-        <h1 className="text-6xl font-bold text-red-600 mb-8">
+      <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-12 max-w-3xl w-full text-center relative z-10">
+        <Heart className="text-red-500 w-14 h-14 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 animate-bounce" />
+
+        <h1 className="text-3xl md:text-6xl font-bold text-red-600 mb-6 md:mb-8">
           So do you love me? I dare you to say no LOL!
         </h1>
-        
-        <p className="text-xl text-gray-600 mb-12">
+
+        <p className="text-base md:text-xl text-gray-600 mb-8 md:mb-12">
           I promise to make it special! 💝
         </p>
-        
-        <div className="flex justify-center items-center gap-6 relative" style={{ minHeight: '300px', padding: '100px 0' }}>
+
+        <div className="flex justify-center items-center gap-6 relative" style={{ minHeight: '240px', padding: '80px 0' }}>
           <button
             onClick={handleYesClick}
-            className="bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-12 rounded-full text-2xl transform hover:scale-110 transition-all duration-200 shadow-lg z-10"
+            className="bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-bold py-3 px-8 md:py-4 md:px-12 rounded-full text-xl md:text-2xl transform hover:scale-110 transition-all duration-200 shadow-lg z-10"
           >
             Yes! 💕
           </button>
-          
+
           <button
-            onMouseEnter={handleNoHover}
-            className="bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-12 rounded-full text-2xl shadow-lg cursor-pointer absolute"
+            onMouseEnter={handleNoEscape}
+            onTouchStart={handleNoEscape}
+            className="bg-red-500 text-white font-bold py-3 px-8 md:py-4 md:px-12 rounded-full text-xl md:text-2xl shadow-lg cursor-pointer absolute select-none"
             style={{
               transform: `translate(${noButtonPosition.left}px, ${noButtonPosition.top}px)`,
-              transition: 'transform 0.3s ease-out'
+              transition: 'transform 0.3s ease-out',
+              touchAction: 'none',
             }}
           >
             No 😢
           </button>
         </div>
-        
-        <p className="text-sm text-gray-400 mt-8 italic">
+
+        <p className="text-sm text-gray-400 mt-4 md:mt-8 italic">
           Hint: The "No" button is a bit shy... 😊
         </p>
       </div>
