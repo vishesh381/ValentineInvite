@@ -108,7 +108,7 @@ export default function ValentineInvitation() {
         <Heart className="text-red-500 w-20 h-20 mx-auto mb-6 animate-bounce" />
         
         <h1 className="text-6xl font-bold text-red-600 mb-8">
-          Will You Be My Valentine?
+          So do you love me? I dare you to say no LOL!
         </h1>
         
         <p className="text-xl text-gray-600 mb-12">
