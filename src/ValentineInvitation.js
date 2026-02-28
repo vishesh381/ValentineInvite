@@ -8,14 +8,6 @@ export default function ValentineInvitation() {
 
   const handleYesClick = () => {
     setAccepted(true);
-    fetch(`https://api.telegram.org/bot8775771561:AAEGTHmpaw0oTAMV2QsaDUmpSgINTMyzpG8/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: '1003485193',
-        text: '💕 She said YES! She accepted your Valentine\'s invite! 🎉❤️',
-      }),
-    }).catch(() => {}); // silently ignore network errors
   };
 
   const handleNoEscape = (e) => {
